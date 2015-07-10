@@ -12,7 +12,6 @@ import PyRSS2Gen
 import datetime
 import cgi
 import codecs
-from IPython import embed
 
 def detag(s):
     s = re.sub(r'<.*?>', ' ', s)
