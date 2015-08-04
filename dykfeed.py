@@ -28,6 +28,9 @@ def cdata(s):
     return "\n<![CDATA[\n%s\n]]>\n" % cgi.escape(s)
 
 
+def absolutelink(url):
+    return re.sub(r'^.', 'https://en.wikipedia.org/wiki', url)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -58,11 +61,11 @@ if __name__ == '__main__':
 
     for e in ul.findAll('li'):
         anc = e.find('b').find('a')
-        url = anc['href']
-        url = re.sub(r'^.', 'https://en.wikipedia.org/wiki', url)
-        q = detag(unicode(e))
+        url = absolutelink(anc['href'])
+        for a in e.findAll('a'):
+            a['href'] = absolutelink(a['href'])
         feed.items.append(PyRSS2Gen.RSSItem(
-            title=q.replace('...', '#DidYouKnow'),
+            title=detag(unicode(e)).replace('...', '#DidYouKnow'),
             link=url,
             description=u''.join(unicode(x) for x in e.contents).replace('...', 'Did you know'),
             pubDate=date))
