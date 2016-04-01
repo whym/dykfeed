@@ -43,7 +43,7 @@ if __name__ == '__main__':
     if options.verbose:
         print >>sys.stderr, options
 
-    source = urllib2.urlopen('http://parsoid-lb.eqiad.wikimedia.org/v2/en.wikipedia.org/html/Template%3ADid_you_know').read()
+    source = urllib2.urlopen('https://en.wikipedia.org/api/rest_v1/page/html/Template%3ADid_you_know').read()
     html = BeautifulSoup(source)
     date = html.find('meta', attrs={'property': 'dc:modified'}).get('content')
     date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -60,7 +60,10 @@ if __name__ == '__main__':
         lastBuildDate=datetime.datetime.utcnow())
 
     for e in ul.findAll('li'):
-        anc = e.find('b').find('a')
+        anc = e.find('b')
+        if anc is None:
+            continue
+        anc = anc.find('a')
         url = absolutelink(anc['href'])
         for a in e.findAll('a'):
             a['href'] = absolutelink(a['href'])
