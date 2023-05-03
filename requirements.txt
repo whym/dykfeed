@@ -1,3 +1,4 @@
 PyRSS2Gen
-BeautifulSoup
-
+beautifulsoup4 # BeautifulSoup
+Mastodon.py
+feedparser

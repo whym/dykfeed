@@ -3,3 +3,4 @@
 *.out
 .ssh
 *.pyc
+public_html/*.xml
