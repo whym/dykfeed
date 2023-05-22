@@ -4,3 +4,8 @@
 .ssh
 *.pyc
 public_html/*.xml
+*.my.cnf
+pyvenv/
+.toolskube/
+.cache/
+.dykfeed/

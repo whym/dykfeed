@@ -1,5 +1,9 @@
 ---
-- name: dykfeed-cron
-  command: flock -n mylock /data/project/dykfeed/run.sh
+- name: dykfeed-rss
+  command: flock -n .dykfeed/lock_rss ./run_rss.sh
   image: tf-python39
   schedule: "12 * * * *"
+- name: dykfeed-mastodon
+  command: env MASTODON_TOKEN=~/.dykfeed/mastodon_token.txt ./pyvenv/bin/python rss2m.py
+  image: tf-python39
+  schedule: "0 * * * *"
