@@ -1,0 +1,5 @@
+---
+- name: dykfeed-cron
+  command: flock -n mylock /data/project/dykfeed/run.sh
+  image: tf-python39
+  schedule: "12 * * * *"
