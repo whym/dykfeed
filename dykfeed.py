@@ -37,7 +37,7 @@ def absolutelink(url):
 def clean_html_in_hooks(source):
     source = re.sub(r'.*<!--Hooks-->', '', source, flags=re.DOTALL)
     source = re.sub(r'<!--HooksEnd-->.*', '', source, flags=re.DOTALL)
-    source = re.sub(r' ?<i.*?>\(pictured\)</i>', '', source)
+    source = re.sub(r' ?<i[^<>]*>\(pictured\)</i>', '', source)
     return source
 
 
@@ -60,6 +60,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output', type=str,
                         default='public_html/rss.xml')
+    parser.add_argument('-u', '--url', type=str,
+                        default='https://en.wikipedia.org/api/rest_v1/page/html/Template%3ADid_you_know')
     parser.add_argument('--bs4features', type=str,
                         default='html.parser')
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     if options.verbose:
         print(f'{options}', file=sys.stderr)
 
-    source = urlopen('https://en.wikipedia.org/api/rest_v1/page/html/Template%3ADid_you_know').read().decode('utf-8')
+    source = urlopen(options.url).read().decode('utf-8')
     html = BeautifulSoup(source, options.bs4features)
     date = html.find('meta', attrs={'property': 'dc:modified'}).get('content')
     date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -85,12 +87,18 @@ if __name__ == '__main__':
     for e in ul.findAll('li'):
         entry = extractEntry(e)
         if entry is None:
+            if options.verbose:
+                print(f'entry: failed: {e}')
             continue
         feed.items.append(PyRSS2Gen.RSSItem(
             title=entry.title,
             link=entry.link,
             description=entry.desc,
             pubDate=date))
+        if options.verbose:
+            print(f'entry: {entry.link}')
 
     with open(options.output, 'w') as f:
         feed.write_xml(f, encoding='utf-8')
+        if options.verbose:
+            print(f'output: {options.output}')

@@ -29,6 +29,11 @@ class TestDYKFeed(unittest.TestCase):
         self.assertEqual('https://en.wikipedia.org/wiki/Soviet_submarine_K-222',
                          dykfeed.extractEntry(node).link)
 
+    def testCleanHtmlItalicPictured(self):
+        s = dykfeed.clean_html_in_hooks('<li id="mwIg">... the composition of <i id="mwJQ"><b id="mwJg"><a rel="mw:WikiLink" href="./Tobit_and_Anna_with_the_Kid" title="Tobit and Anna with the Kid" id="mwJw">Tobit and Anna with the Kid</a></b></i> <i id="mwKA">(pictured)</i><span style="padding-left:0.15em;" about="#mwt35" typeof="mw:Transclusion" id="mwKQ"><span typeof="mw:Entity">?</span></span></li>')
+        self.assertEqual('<li id="mwIg">... the composition of <i id="mwJQ"><b id="mwJg"><a rel="mw:WikiLink" href="./Tobit_and_Anna_with_the_Kid" title="Tobit and Anna with the Kid" id="mwJw">Tobit and Anna with the Kid</a></b></i><span style="padding-left:0.15em;" about="#mwt35" typeof="mw:Transclusion" id="mwKQ"><span typeof="mw:Entity">?</span></span></li>',
+                         s)
+
     def testExtractTitleAmpersand(self):
         node = parse('<li>... that the <b><a href="/wiki/Huanaki_Cultural_Centre_%26_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="/wiki/Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?</li>').li
         self.assertEqual('#DidYouKnow that the Huanaki Cultural Centre & Museum was destroyed by a cyclone?',
