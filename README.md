@@ -13,6 +13,10 @@ Small scripts to provide [a "Did you know?" feed](http://feeds.feedburner.com/en
 1. See <https://mastodonpy.readthedocs.io/en/stable/> and save your authentication token.
 2. `docker run dykfeed env MASTODON_TOKEN=mastodon_token.txt python rss2m.py`
 
+## How to run tests
+
+`docker build -t dykfeed . && docker run -it dykfeed`
+
 ## Notes on running it at Toolforge
 
 - Run `toolforge-jobs run bootstrap-venv --command "./bootstrap_venv.sh" --image tf-python39 --wait` when dependencies (`requirements.txt`) change.
