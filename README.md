@@ -10,8 +10,8 @@ Small scripts to provide [a "Did you know?" feed](http://feeds.feedburner.com/en
 
 ## How to run the bot
 
-1. See <https://mastodonpy.readthedocs.io/en/stable/> and save your authentication token.
-2. `docker run dykfeed env MASTODON_TOKEN=mastodon_token.txt python rss2m.py`
+1. Visit <https://mastodonpy.readthedocs.io/en/stable/> to find how to save your authentication token.
+2. `docker run dykfeed python rss2m.py --token mastodon_token.txt`
 
 ## How to run tests
 
