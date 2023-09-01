@@ -37,7 +37,7 @@ def absolutelink(url):
 def clean_html_in_hooks(source):
     source = re.sub(r'.*<!--Hooks-->', '', source, flags=re.DOTALL)
     source = re.sub(r'<!--HooksEnd-->.*', '', source, flags=re.DOTALL)
-    source = re.sub(r' ?<i[^<>]*>\(pictured\)</i>', '', source)
+    source = re.sub(r' ?<i[^<>]*>\((pictured|example pictured)\)</i>', '', source)
     return source
 
 
