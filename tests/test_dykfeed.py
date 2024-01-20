@@ -24,6 +24,11 @@ class TestDYKFeed(unittest.TestCase):
         self.assertEqual('#DidYouKnow that the Soviet submarine K-222 was the fastest submarine ever built?',
                          dykfeed.extractEntry(node).title)
 
+    def testExtractUrlNdash(self):
+        node = parse('<li id="mwNg">... that the <b id="mwNw"><a rel="mw:WikiLink" href="./Ava–Hanthawaddy_War_(1385–1391)" title="Ava–Hanthawaddy War (1385–1391)" id="mwOA">Ava–Hanthawaddy War of 1385–1391</a></b> began when [...]?</li>').li
+        self.assertEqual('https://en.wikipedia.org/wiki/Ava%E2%80%93Hanthawaddy_War_%281385%E2%80%931391%29',
+                         dykfeed.extractEntry(node).link)
+
     def testExtractUrlNormal(self):
         node = parse('<li id="mwIg">... that the Soviet submarine <i id="mwIw"><b id="mwJA"><a rel="mw:WikiLink" href="./Soviet_submarine_K-222" title="Soviet submarine K-222" id="mwJQ"><span class="nowrap" about="#mwt35" typeof="mw:Transclusion" id="mwJg">K-222</span></a></b></i> was the fastest submarine ever built?</li>').li
         self.assertEqual('https://en.wikipedia.org/wiki/Soviet_submarine_K-222',
@@ -35,11 +40,12 @@ class TestDYKFeed(unittest.TestCase):
                          s)
 
     def testExtractTitleAmpersand(self):
-        node = parse('<li>... that the <b><a href="/wiki/Huanaki_Cultural_Centre_%26_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="/wiki/Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?</li>').li
+        node = parse('<li>... that the <b><a href="./Huanaki_Cultural_Centre_&_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="./Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?</li>').li
         self.assertEqual('#DidYouKnow that the Huanaki Cultural Centre & Museum was destroyed by a cyclone?',
                          dykfeed.extractEntry(node).title)
 
+    # https://en.wikipedia.org/api/rest_v1/page/html/Template%3ADid_you_know/1042144018
     def testExtractDescAmpersand(self):
-        node = parse('<li>... that the <b><a href="/wiki/Huanaki_Cultural_Centre_%26_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="/wiki/Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?</li>').li
-        self.assertEqual('Did you know that the <b><a href="https://en.wikipedia.org/wikiwiki/Huanaki_Cultural_Centre_%26_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="https://en.wikipedia.org/wikiwiki/Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?',
+        node = parse('<li>... that the <b><a href="./Huanaki_Cultural_Centre_&_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="./Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?</li>').li
+        self.assertEqual('Did you know that the <b><a href="https://en.wikipedia.org/wiki/Huanaki_Cultural_Centre_%26_Museum" title="Huanaki Cultural Centre &amp; Museum">Huanaki Cultural Centre &amp; Museum</a></b> was destroyed by <a href="https://en.wikipedia.org/wiki/Cyclone_Heta" title="Cyclone Heta">a cyclone</a>?',
                          dykfeed.extractEntry(node).desc)

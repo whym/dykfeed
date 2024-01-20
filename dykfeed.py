@@ -10,13 +10,28 @@ Parse https://en.wikipedia.org/wiki/Template:Did_you_know and generate a feed.
 import sys
 import argparse
 from urllib.request import urlopen
+from urllib.parse import urlparse, quote
 from bs4 import BeautifulSoup
 import re
+import copy
 import PyRSS2Gen
 import datetime
 from collections import namedtuple
 
 FeedEntry = namedtuple('FeedEntry', ('title', 'link', 'desc'))
+
+
+def reencode_url(url):
+    parsed_url = urlparse(url)
+    encoded_path = quote(parsed_url.path)
+
+    if parsed_url.query:
+        encoded_query = quote(parsed_url.query)
+        encoded_url = f"{parsed_url.scheme}://{parsed_url.netloc}{encoded_path}?{encoded_query}"
+    else:
+        encoded_url = f"{parsed_url.scheme}://{parsed_url.netloc}{encoded_path}"
+
+    return encoded_url
 
 
 def detag(node):
@@ -42,13 +57,18 @@ def clean_html_in_hooks(source):
 
 
 def extractEntry(htmlNode):
+    htmlNode = copy.copy(htmlNode)
+
+    # extract link from <b><a href="...">...
     anc = htmlNode.find('b')
     if anc is None:
         return None
     anc = anc.find('a')
-    url = absolutelink(anc['href'])
+    url = reencode_url(absolutelink(anc['href']))
+
     for a in htmlNode.findAll('a'):
-        a['href'] = absolutelink(a['href'])
+        a['href'] = reencode_url(absolutelink(a['href']))
+
     title = replace_dyk(detag(htmlNode), '#DidYouKnow')
     desc = htmlNode.encode_contents(formatter='html5').decode('utf-8')
     desc = replace_dyk(desc, 'Did you know')

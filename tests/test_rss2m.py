@@ -40,6 +40,14 @@ class TestRss2m(unittest.TestCase):
         self.assertEqual('https://enwp.org/100%25',
                          rss2m.normalize_url('https://enwp.org/100%'))
 
+    def testNormalizeUrlWithNdashEscaped(self):
+        self.assertEqual('https://enwp.org/A–Z',
+                         rss2m.normalize_url('https://enwp.org/A%E2%80%93Z'))
+
+    def testNormalizeUrlWithNdashUnescaped(self):
+        self.assertEqual('https://enwp.org/A–Z',
+                         rss2m.normalize_url('https://enwp.org/A–Z'))
+
     def testNormalizeUrlWithQuoteAndQuestion(self):
         self.assertEqual(
             "https://enwp.org/Where's_Wally%3F",
