@@ -1,6 +1,6 @@
 # Dykfeed
 
-Small scripts to provide [a "Did you know?" feed](http://feeds.feedburner.com/enwp/DidYouKnow) and [a bot](https://botsin.space/@DidYouKnowWp).
+Small scripts to provide [a "Did you know?" feed](http://feeds.feedburner.com/enwp/DidYouKnow) and [a bot](https://wikis.world/@DidYouKnowEnWp).
 
 ## How to generate an RSS
 
