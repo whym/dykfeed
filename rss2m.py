@@ -15,13 +15,12 @@ import hashlib
 import random
 import html
 import re
-import os
 import argparse
 
 
 rss_url = 'https://dykfeed.toolforge.org/rss.xml'
 hashtags = "#Wikipedia"
-max_items_to_post = 3
+max_items_to_post = 4
 items_to_fetch = 20
 url_ending_characters = re.compile(r'[^a-zA-Z0-9_]$')  # https://github.com/mastodon/mastodon/blob/00084581289b4b7afd120845363b16247c5fa93b/config/initializers/twitter_regex.rb#L12
 to_be_escaped_in_url = re.compile(r'[!\(\)\[\]]')
@@ -83,6 +82,8 @@ if __name__ == '__main__':
     entries = [e for e in feed.entries if normalize_url(e.link) not in already_posted]
     random.shuffle(entries)
 
+    print(f'feed: {rss_url}')
+    print(f'site: {mastodon.api_base_url}')
     print(f'feed timestamp: {feed.feed.updated}')
     print(f'{len(timeline)} timeline items and {len(feed.entries)} feed items fetched, {len(entries)} to be posted')
 
