@@ -15,6 +15,7 @@ import hashlib
 import random
 import html
 import re
+import os
 import argparse
 
 
@@ -59,6 +60,16 @@ def extract_urls_from_timeline(timeline):
             yield normalize_url(status['card']['url'])
 
 
+def mastodon_from_envvars():
+    assert os.getenv('MASTODON_PY_TOKEN') is not None
+    text = os.getenv('MASTODON_PY_TOKEN')
+    access_token, base_url, client_id, client_secret = text.split('\n', 4)[:4]
+    return Mastodon(access_token=access_token,
+                    api_base_url=base_url,
+                    client_id=client_id,
+                    client_secret=client_secret)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--token', dest='token', type=str,
@@ -66,8 +77,11 @@ if __name__ == '__main__':
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()
 
-    # Mastodon API credentials
-    mastodon = Mastodon(access_token=args.token)
+    if args.token is not None:
+        # read Mastodon API credentials from file
+        mastodon = Mastodon(access_token=args.token)
+    else:
+        mastodon = mastodon_from_envvars()
 
     # Read your Mastdon timeline
     timeline = mastodon.account_statuses(

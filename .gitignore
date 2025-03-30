@@ -9,3 +9,4 @@ pyvenv/
 .toolskube/
 .cache/
 .dykfeed/
+.prj/

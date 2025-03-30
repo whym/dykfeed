@@ -19,5 +19,5 @@ Small scripts to provide [a "Did you know?" feed](http://feeds.feedburner.com/en
 
 ## Notes on running it at Toolforge
 
-- Run `toolforge-jobs run bootstrap-venv --command "./bootstrap_venv.sh" --image tf-python39 --wait` when dependencies (`requirements.txt`) change.
-- `chmod 600 $MASTODON_TOKEN`
+- Run `toolforge-jobs run bootstrap-venv --command "./bootstrap_venv.sh" --image python3.13 --wait` when dependencies change.
+- Use `cat | toolforge envvars create MASTODON_PY_TOKEN` to store the token.
