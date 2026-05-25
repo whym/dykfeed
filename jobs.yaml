@@ -1,9 +1,9 @@
 ---
 - name: dykfeed-rss
   command: flock -n .dykfeed/lock_rss ./run_rss.sh
-  image: tf-python39
+  image: python3.13
   schedule: "12 * * * *"
 - name: dykfeed-mastodon
   command: ./pyvenv/bin/python rss2m.py
-  image: tf-python39
+  image: python3.13
   schedule: "0 * * * *"

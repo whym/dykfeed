@@ -9,7 +9,7 @@ Parse https://en.wikipedia.org/wiki/Template:Did_you_know and generate a feed.
 
 import sys
 import argparse
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.parse import urlparse, quote
 from bs4 import BeautifulSoup
 import re
@@ -66,11 +66,11 @@ def extractEntry(htmlNode):
     anc = anc.find('a')
     url = reencode_url(absolutelink(anc['href']))
 
-    for a in htmlNode.findAll('a'):
+    for a in htmlNode.find_all('a'):
         a['href'] = reencode_url(absolutelink(a['href']))
 
     title = replace_dyk(detag(htmlNode), '#DidYouKnow')
-    desc = htmlNode.encode_contents(formatter='html5').decode('utf-8')
+    desc = htmlNode.decode_contents(formatter='minimal', eventual_encoding='utf-8')
     desc = replace_dyk(desc, 'Did you know')
     return FeedEntry(title.strip(), url, desc.strip())
 
@@ -82,32 +82,35 @@ if __name__ == '__main__':
                         default='public_html/rss.xml')
     parser.add_argument('-u', '--url', type=str,
                         default='https://en.wikipedia.org/api/rest_v1/page/html/Template%3ADid_you_know')
+    parser.add_argument('--user-agent', type=str,
+                        default=None)
     parser.add_argument('--bs4features', type=str,
                         default='html.parser')
     parser.add_argument('-v', '--verbose', action='store_true',
                         default=False,
                         help='turn on verbose message output')
-    options = parser.parse_args()
-    if options.verbose:
-        print(f'{options}', file=sys.stderr)
+    args = parser.parse_args()
+    if args.verbose:
+        print(f'{args}', file=sys.stderr)
 
-    source = urlopen(options.url).read().decode('utf-8')
-    html = BeautifulSoup(source, options.bs4features)
+    headers = {'User-Agent': args.user_agent} if args.user_agent else {}
+    source = urlopen(Request(args.url, headers=headers)).read().decode('utf-8')
+    html = BeautifulSoup(source, args.bs4features)
     date = html.find('meta', attrs={'property': 'dc:modified'}).get('content')
     date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
 
-    ul = BeautifulSoup(clean_html_in_hooks(source), options.bs4features)
+    ul = BeautifulSoup(clean_html_in_hooks(source), args.bs4features)
 
     feed = PyRSS2Gen.RSS2(
         title=u'Wikipedia\'s latest "Did you know?" entries',
         link=u'https://en.wikipedia.org/wiki/Wikipedia:Did_you_know',
         description=u'Latest "Did you know?" entries written by English Wikipedia contributors',
-        lastBuildDate=datetime.datetime.utcnow())
+        lastBuildDate=datetime.datetime.now(datetime.UTC))
 
-    for e in ul.findAll('li'):
+    for e in ul.find_all('li'):
         entry = extractEntry(e)
         if entry is None:
-            if options.verbose:
+            if args.verbose:
                 print(f'entry: failed: {e}')
             continue
         feed.items.append(PyRSS2Gen.RSSItem(
@@ -115,10 +118,10 @@ if __name__ == '__main__':
             link=entry.link,
             description=entry.desc,
             pubDate=date))
-        if options.verbose:
+        if args.verbose:
             print(f'entry: {entry.link}')
 
-    with open(options.output, 'w') as f:
+    with open(args.output, 'w') as f:
         feed.write_xml(f, encoding='utf-8')
-        if options.verbose:
-            print(f'output: {options.output}')
+        if args.verbose:
+            print(f'output: {args.output}')

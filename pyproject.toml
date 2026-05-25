@@ -1,2 +1,22 @@
+[project]
+name = "dykfeed"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "PyRSS2Gen",
+    "beautifulsoup4",
+    "Mastodon.py",
+    "feedparser",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
 [tool.pytest.ini_options]
 pythonpath = "."
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*.py"]

@@ -52,7 +52,7 @@ def normalize_url(url):
 def extract_urls_from_timeline(timeline):
     for status in timeline:
         bs = BeautifulSoup(status['content'], features='html.parser')
-        for a in bs.findAll('a'):
+        for a in bs.find_all('a'):
             url = a.attrs.get('href')
             if url is not None:
                 yield normalize_url(url)
