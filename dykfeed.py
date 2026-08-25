@@ -94,7 +94,7 @@ if __name__ == '__main__':
     source = urlopen(options.url).read().decode('utf-8')
     html = BeautifulSoup(source, options.bs4features)
     date = html.find('meta', attrs={'property': 'dc:modified'}).get('content')
-    date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+    date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
 
     ul = BeautifulSoup(clean_html_in_hooks(source), options.bs4features)
 
